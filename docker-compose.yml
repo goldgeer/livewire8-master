@@ -1,0 +1,37 @@
+version: "3.5"
+services:
+    konoweb:
+       image: kage.io:5000/coder:p7411n16vs412
+       volumes:
+           - ./:/var/www/html
+           - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+           - ./000-default.conf:/etc/apache2/sites-available/000-default.conf
+       working_dir: /var/www/html
+       depends_on:
+           - konodb
+       ports:
+           - 80:80
+           - 8088:8080
+       networks:
+           - x-net
+           - sql-net
+    konodb:
+        image: mysql:5.7
+        networks:
+            - sql-net
+        ports:
+            - 3306:3306
+        volumes:
+            - livewire-sql-data:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=1q2w3e4r
+            - MYSQL_USER=kono
+            - MYSQL_PASSWORD=1q2w3e4r
+            - MYSQL_DATABASE=kono
+volumes:
+    livewire-sql-data: {}
+networks:
+    x-net:
+       external:
+           name: x-net
+    sql-net: {}
